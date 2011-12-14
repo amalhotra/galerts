@@ -25,23 +25,23 @@ module Galerts
 		ALL_VOL = 'All results'
 
 		VOLS_TYPES = {
-			BEST_VOL => '0'
+			BEST_VOL => '0',
 			ALL_VOL => '1'
 		}
 
 		EVERYTHING = 'Everything'
 		NEWS = 'News'
 		BLOGS = 'Blogs'
-		RT = 'Realtime'
+		REALTIME = 'Realtime'
 		VIDEO = 'Video'
 		DISCUSSIONS = 'Discussions'
 
 		ALERT_TYPES = {
-			EVERYTHING => '7'
-			NEWS = '1'
-			BLOGS = '4'
-			RT = '20'
-			VIDEO = '9'
+			EVERYTHING => '7',
+			NEWS = '1',
+			BLOGS = '4',
+			REALTIME = '20',
+			VIDEO = '9',
 			DISCUSSIONS = '9'
 		}
 
