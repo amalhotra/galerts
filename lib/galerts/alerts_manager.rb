@@ -3,7 +3,7 @@ require 'mechanize'
 module Galerts
 	class AlertsManager
 	
-		include GoogleDefaults
+		include Galerts::GoogleDefaults
 
 		def initialize(email,password,domain='com')
 			email+='@gmail.com' if email.index('@').nil?
@@ -14,6 +14,7 @@ module Galerts
 		end
 
 		def alerts
+			g_alerts = []
 			alerts_page = @agent.get(alerts_url)
 			alert_rows = alerts_page.parser.css('table.alerts').css('tr')
 			type = EVERYTHING
@@ -35,8 +36,8 @@ module Galerts
 					feed_url = tds[4].css('a').first["href"]
 					delivery = FEED_DELIVERY
 				end
-				email = self.email # Could be one of many email addresses assocaited with account
-				yield Alert.new(email,query,type,frequency,volume,delivery,s,feed_url)
+				email = @email # TODO: Could be one of many email addresses associated with account
+				g_alerts << Alert.new(email,query,type,frequency,volume,delivery,s,feed_url)
 			end	
 		end
 
@@ -54,7 +55,30 @@ module Galerts
 		end
 
 		def update(alert)
-				
+			x,es,hps = scrape_x_es_hps(alert)
+			params = {
+				'd' => DELIVERY_TYPES[alert.delivery] || DEFAULT_DELIVER,
+				'e' => @email,
+				'es' => es,
+				'hps' => hps,
+				'q' => alert.query,
+				'se' => 'Save',
+				'x' => x,
+				't' => ALERT_TYPES[alert.type],
+				'l' => ALERT_VOLS[alert.vol],
+			}	
+			params['f'] = ALERT_FREQS[alert.frequency] if alert.delivery == EMAIL_DELIVERY
+			resp = @agent.get(update_url,params)
+		end
+
+		def delete(alert)
+			params = {
+				'da' => 'Delete',
+				'e' => @email,
+				's' => alert.s,
+				'x' => scrape_galx('/alerts/manage')
+			}
+			resp = @agent.get(update_url,params)
 		end
 
 		private
@@ -64,7 +88,7 @@ module Galerts
 			login_form = login_page.forms.first
 			login_form.Email = @email
 			login_form.Passwd = password
-			login_resp = agent.submit(login_form)
+			login_resp = @agent.submit(login_form)
 		end
 
 		def scrape_galx(path = "/alerts")
@@ -72,8 +96,12 @@ module Galerts
 			resp.parser.css('input[name=x]').first["value"]
 		end
 
-		def scrape_sig_es_hps(alert)
-				
+		def scrape_x_es_hps(alert)
+			resp = @agent.get(update_url,{'s' => alert.s})
+			x = resp.parser.css('input[name=x]').first["value"]
+			es = resp.parser.css('input[name=es]').first["value"]
+			hps = resp.parser.css('input[name=hps]').first["value"]
+			[x,es,hps]
 		end
 
 		def login_url

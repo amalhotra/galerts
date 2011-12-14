@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["amalhotra15.9@gmail.com"]
   s.homepage    = ""
   s.summary     = %q{Ruby library to manage google alerts}
-  s.description = %q{TODO: Write a gem description}
+  s.description = %q{Ruby port of https://github.com/jab/galerts which also supports multiple google domains}
 
   s.rubyforge_project = "galerts"
 
@@ -18,8 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-	s.add_dependecy "mechanize"
-
+	s.add_dependency "mechanize"
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"

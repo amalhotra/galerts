@@ -8,7 +8,7 @@ module Galerts
 
 		DELIVERY_TYPES = {
 			EMAIL_DELIVERY => '0',
-			FEED_DELIVERY => DEFULAT_DELIVERY
+			FEED_DELIVERY => DEFAULT_DELIVERY
 		}
 
 		RT = 'As-it-happens'
@@ -38,11 +38,11 @@ module Galerts
 
 		ALERT_TYPES = {
 			EVERYTHING => '7',
-			NEWS = '1',
-			BLOGS = '4',
-			REALTIME = '20',
-			VIDEO = '9',
-			DISCUSSIONS = '9'
+			NEWS => '1',
+			BLOGS => '4',
+			REALTIME => '20',
+			VIDEO => '9',
+			DISCUSSIONS => '9'
 		}
 
 	end

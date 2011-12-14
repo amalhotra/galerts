@@ -2,13 +2,13 @@ module Galerts
 	# Class models a google alert
 	class Alert
 
-		include GoogleDefaults
+		include Galerts::GoogleDefaults
 
 		attr_reader :email,:query,:type,:frequency,:volume,:delivery
 		
 		def initialize(email,query,type,frequency,volume,delivery,s,feed_url=nil)
 			raise "Unknown alert type" unless ALERT_TYPES.has_key?(type)
-			raise "Unknown frequency type" unless FREQS_TYPE.has_key?(frequency)
+			raise "Unknown frequency type" unless FREQS_TYPES.has_key?(frequency)
 			raise "Unknown alert volume" unless VOLS_TYPES.has_key?(volume)
 			raise "Unknown delivery method" unless DELIVERY_TYPES.has_key?(delivery)
 			@email = email
@@ -39,10 +39,6 @@ module Galerts
 		def delivery=(d)
 			raise "Unknown delivery method" unless DELIVERY_TYPES.has_key?(delivery)
 			@delivery = d
-		end
-
-		def hash
-			#TODO
 		end
 
 		# TODO Encode query as utf-8
