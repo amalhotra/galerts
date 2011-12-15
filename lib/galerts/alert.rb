@@ -4,7 +4,7 @@ module Galerts
 
 		include Galerts::GoogleDefaults
 
-		attr_reader :email,:query,:type,:frequency,:volume,:delivery
+		attr_reader :email,:query,:type,:frequency,:volume,:delivery,:s,:feed_url
 		
 		def initialize(email,query,type,frequency,volume,delivery,s,feed_url=nil)
 			raise "Unknown alert type" unless ALERT_TYPES.has_key?(type)
@@ -22,7 +22,7 @@ module Galerts
 		end
 
 		def frequency=(f)
-			raise "Unknown frequency type" unless FREQS_TYPE.has_key?(f)
+			raise "Unknown frequency type" unless FREQS_TYPES.has_key?(f)
 			@frequency = f
 		end
 

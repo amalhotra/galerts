@@ -15,7 +15,7 @@ module Galerts
 
 		def alerts
 			g_alerts = []
-			alerts_page = @agent.get(alerts_url)
+			alerts_page = @agent.get(alerts_url("/manage"))
 			alert_rows = alerts_page.parser.css('table.alerts').css('tr')
 			type = EVERYTHING
 			alert_rows.each do |alert_row|
@@ -33,25 +33,24 @@ module Galerts
 					feed_url = nil
 					delivery = EMAIL_DELIVERY
 				else
-					feed_url = tds[4].css('a').first["href"]
+					feed_url = tds[4].css('a')[1]["href"]
 					delivery = FEED_DELIVERY
 				end
 				email = @email # TODO: Could be one of many email addresses associated with account
 				g_alerts << Alert.new(email,query,type,frequency,volume,delivery,s,feed_url)
 			end	
+			g_alerts
 		end
 
 		def create(query,type,frequency = RT,volume = ALL_VOL,feed=false)
-			x = scrape_galx
-			params = {
-				'q' => query,
-				'e' => feed ? FEED_DELIVERY : @email,
-				'f' => FREQS_TYPES[feed ? RT : frequency],
-				't' => ALERT_TYPES[type],
-				'l' => VOLS_TYPES[vol],
-				'x' => x
-			}
-			resp = @agent.get(create_url,params)
+			create_page = @agent.get(alerts_url("/create"))
+			create_form = create_page.forms.first
+			create_form.q = query
+			create_form.e = feed ? FEED_DELIVERY : @email
+			create_form.f = FREQS_TYPES[feed ? RT : frequency]
+			create_form.t = ALERT_TYPES[type]
+			create_form.l = VOLS_TYPES[volume]
+			resp = @agent.submit(create_form)
 		end
 
 		def update(alert)
@@ -65,10 +64,10 @@ module Galerts
 				'se' => 'Save',
 				'x' => x,
 				't' => ALERT_TYPES[alert.type],
-				'l' => ALERT_VOLS[alert.vol],
+				'l' => VOLS_TYPES[alert.volume],
 			}	
-			params['f'] = ALERT_FREQS[alert.frequency] if alert.delivery == EMAIL_DELIVERY
-			resp = @agent.get(update_url,params)
+			params['f'] = FREQS_TYPES[alert.frequency] if alert.delivery == EMAIL_DELIVERY
+			resp = @agent.post(alerts_url("/save"),params)
 		end
 
 		def delete(alert)
@@ -78,7 +77,7 @@ module Galerts
 				's' => alert.s,
 				'x' => scrape_galx('/alerts/manage')
 			}
-			resp = @agent.get(update_url,params)
+			resp = @agent.post(alerts_url("/save"),params)
 		end
 
 		private
@@ -97,7 +96,7 @@ module Galerts
 		end
 
 		def scrape_x_es_hps(alert)
-			resp = @agent.get(update_url,{'s' => alert.s})
+			resp = @agent.get(alerts_url("/edit"),{'s' => alert.s})
 			x = resp.parser.css('input[name=x]').first["value"]
 			es = resp.parser.css('input[name=es]').first["value"]
 			hps = resp.parser.css('input[name=hps]').first["value"]
@@ -108,16 +107,8 @@ module Galerts
 			"https://accounts.google.#{@domain}/ServiceLogin?service=alerts&continue=#{alerts_url}"
 		end
 
-		def alerts_url
-			"http://www.google.#{@domain}/alerts/manage"
-		end
-
-		def create_url
-			"http://www.google.#{@domain}/alerts/create"
-		end
-
-		def update_url
-			"http://www.google.#{@domain}/alerts/save"
+		def alerts_url(path = "")
+			"http://www.google.#{@domain}/alerts#{path}"
 		end
 
 		def init_agent
