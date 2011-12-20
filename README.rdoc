@@ -7,6 +7,7 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
 * List all alerts associated with account.
 * Create new alerts for any google domain.
 * Update existing alert: Change delivery, frequency, volume, alert type or google domain.
+* Find an alert by keyword
 
 == Example Code:
 
@@ -32,3 +33,7 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
   # Delete an alert
 
   g_manager.delete(sample_alert)
+
+  # Find an alert by search string
+  # Returns an array of Alert objects
+  g_manager.find_by_query("ruby google alerts")
