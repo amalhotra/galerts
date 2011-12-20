@@ -91,6 +91,10 @@ module Galerts
 			resp = @agent.post(alerts_url("/save"),params)
 		end
 
+		def find_by_query(query)
+			self.alerts.select{|a| a.query == query}
+		end
+
 		private
 
 		def authenticated?(domain)

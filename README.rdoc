@@ -10,7 +10,7 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
 
 == Example Code
 
-require 'galerts'
+	require 'galerts'
 
 	g_manager = Galerts::AlertsManager.new(email,password)
 
