@@ -4,9 +4,10 @@ module Galerts
 
 		include Galerts::GoogleDefaults
 
-		attr_reader :email,:query,:type,:frequency,:volume,:delivery,:s,:feed_url
+		attr_reader :email,:type,:frequency,:volume,:delivery,:s,:feed_url
+		attr_accessor :query,:domain
 		
-		def initialize(email,query,type,frequency,volume,delivery,s,feed_url=nil)
+		def initialize(email,query,search_query,type,frequency,volume,delivery,s,feed_url=nil)
 			raise "Unknown alert type" unless ALERT_TYPES.has_key?(type)
 			raise "Unknown frequency type" unless FREQS_TYPES.has_key?(frequency)
 			raise "Unknown alert volume" unless VOLS_TYPES.has_key?(volume)
@@ -19,6 +20,8 @@ module Galerts
 			@delivery = delivery
 			@s = s
 			@feed_url = feed_url
+			@search_query = search_query
+			@domain = URI(search_query).host.split(".").last if search_query && !search_query.empty?
 		end
 
 		def frequency=(f)

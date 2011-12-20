@@ -5,12 +5,14 @@ module Galerts
 	
 		include Galerts::GoogleDefaults
 
-		def initialize(email,password,domain='com')
+		def initialize(email,password)
 			email+='@gmail.com' if email.index('@').nil?
 			@email = email
-			@domain = domain
+			domain = "com"
+			@password = password
 			init_agent
-			@alerts_page = login(password)
+			@alerts_page = login(domain)
+			@auth_domains = ["com"]
 		end
 
 		def alerts
@@ -26,9 +28,9 @@ module Galerts
 				end
 				s = tds[0].css('input[name=s]').first["value"]
 				query = tds[1].text
+				search_query = tds[1].css('a').first["href"]
 				volume = tds[2].text
 				frequency = tds[3].text
-				tddelivery = tds[4].text
 				if tds[4].css('a').empty?
 					feed_url = nil
 					delivery = EMAIL_DELIVERY
@@ -37,13 +39,14 @@ module Galerts
 					delivery = FEED_DELIVERY
 				end
 				email = @email # TODO: Could be one of many email addresses associated with account
-				g_alerts << Alert.new(email,query,type,frequency,volume,delivery,s,feed_url)
+				g_alerts << Alert.new(email,query,search_query,type,frequency,volume,delivery,s,feed_url)
 			end	
 			g_alerts
 		end
 
-		def create(query,type,frequency = RT,volume = ALL_VOL,feed=false)
-			create_page = @agent.get(alerts_url("/create"))
+		def create(query,domain = "com",type = EVERYTHING,frequency = RT,volume = ALL_VOL,feed=false)
+			authenticate!(domain)
+			create_page = @agent.get(alerts_url("/create",domain))
 			create_form = create_page.forms.first
 			create_form.q = query
 			create_form.e = feed ? FEED_DELIVERY : @email
@@ -51,12 +54,14 @@ module Galerts
 			create_form.t = ALERT_TYPES[type]
 			create_form.l = VOLS_TYPES[volume]
 			resp = @agent.submit(create_form)
+			# TODO: Return alert as GAlerts::Alert object just created
 		end
 
 		def update(alert)
+			authenticate!(alert.domain)
 			x,es,hps = scrape_x_es_hps(alert)
 			params = {
-				'd' => DELIVERY_TYPES[alert.delivery] || DEFAULT_DELIVER,
+				'd' => DELIVERY_TYPES[alert.delivery] || DEFAULT_DELIVERY,
 				'e' => @email,
 				'es' => es,
 				'hps' => hps,
@@ -67,7 +72,7 @@ module Galerts
 				'l' => VOLS_TYPES[alert.volume],
 			}	
 			params['f'] = FREQS_TYPES[alert.frequency] if alert.delivery == EMAIL_DELIVERY
-			resp = @agent.post(alerts_url("/save"),params)
+			resp = @agent.post(alerts_url("/save",alert.domain),params)
 		end
 
 		def delete(alert)
@@ -75,40 +80,49 @@ module Galerts
 				'da' => 'Delete',
 				'e' => @email,
 				's' => alert.s,
-				'x' => scrape_galx('/alerts/manage')
+				'x' => scrape_galx
 			}
 			resp = @agent.post(alerts_url("/save"),params)
 		end
 
 		private
 
-		def login(password)
-			login_page = @agent.get(login_url)			
+		def authenticated?(domain)
+			!@auth_domains.index(domain).nil?
+		end
+
+		def authenticate!(domain)
+			return if authenticated?(domain)
+			login(domain)
+		end
+
+		def login(domain="com")
+			login_page = @agent.get(login_url(domain))			
 			login_form = login_page.forms.first
 			login_form.Email = @email
-			login_form.Passwd = password
+			login_form.Passwd = @password
 			login_resp = @agent.submit(login_form)
 		end
 
-		def scrape_galx(path = "/alerts")
-			resp = @agent.get("http://www.google.com#{path}")
+		def scrape_galx
+			resp = @agent.get(alerts_url("/manage"))
 			resp.parser.css('input[name=x]').first["value"]
 		end
 
 		def scrape_x_es_hps(alert)
-			resp = @agent.get(alerts_url("/edit"),{'s' => alert.s})
+			resp = @agent.get(alerts_url("/edit",alert.domain),{'s' => alert.s})
 			x = resp.parser.css('input[name=x]').first["value"]
 			es = resp.parser.css('input[name=es]').first["value"]
 			hps = resp.parser.css('input[name=hps]').first["value"]
 			[x,es,hps]
 		end
 
-		def login_url
-			"https://accounts.google.#{@domain}/ServiceLogin?service=alerts&continue=#{alerts_url}"
+		def login_url(domain="com")
+			"https://accounts.google.#{domain}/ServiceLogin?service=alerts&continue=#{alerts_url("",domain)}"
 		end
 
-		def alerts_url(path = "")
-			"http://www.google.#{@domain}/alerts#{path}"
+		def alerts_url(path = "",domain="com")
+			"http://www.google.#{domain}/alerts#{path}"
 		end
 
 		def init_agent
