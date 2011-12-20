@@ -1,0 +1,21 @@
+= Galerts
+
+Simple Ruby library that uses Mechanize to scrape Google Alerts from the alerts webpage
+
+== Features:
+
+* List all alerts associated with account.
+* Create new alerts in any google domain.
+* Update existing alert: Change delivery, frequency, volume, alert type or google domain
+
+== Example Code
+
+require 'galerts'
+
+g_manager = Galerts::AlertsManager.new(email,password)
+# List alerts: Return an Array of Alert objects (lib/galerts/alert.rb)
+my_alerts = g_manager.alerts
+sample_alert = my_alerts.first
+sample_alert.domain = "co.uk"
+g_manager.update(sample_alert)
+
