@@ -46,7 +46,7 @@ module Galerts
 
 		# TODO Encode query as utf-8
 		def to_s
-			"<#{self.class.to_s} query=#{query} type=#{type} freq=#{frequency} delivery=#{delivery}>"
+			"<#{self.class.to_s} query=#{query} type=#{type} freq=#{frequency} delivery=#{delivery} domain=#{domain} search_query=#{search_query}>"
 		end
 
 	end

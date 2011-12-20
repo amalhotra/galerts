@@ -5,14 +5,20 @@ module Galerts
 	
 		include Galerts::GoogleDefaults
 
+		attr_reader :auth_domains,:email
+
 		def initialize(email,password)
 			email+='@gmail.com' if email.index('@').nil?
 			@email = email
 			domain = "com"
 			@password = password
 			init_agent
-			@alerts_page = login(domain)
+			login(domain)
 			@auth_domains = ["com"]
+		end
+
+		def to_s
+			"<#{self.class} email=#{@email} auth_domains=#{@auth_domains}>"
 		end
 
 		def alerts
