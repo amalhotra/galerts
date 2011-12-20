@@ -4,7 +4,7 @@ module Galerts
 
 		include Galerts::GoogleDefaults
 
-		attr_reader :email,:type,:frequency,:volume,:delivery,:s,:feed_url
+		attr_reader :email,:type,:frequency,:volume,:delivery,:s,:feed_url,:search_query
 		attr_accessor :query,:domain
 		
 		def initialize(email,query,search_query,type,frequency,volume,delivery,s,feed_url=nil)
