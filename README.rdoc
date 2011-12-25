@@ -9,6 +9,10 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
 * Update existing alert: Change delivery, frequency, volume, alert type or google domain.
 * Find an alert by keyword
 
+== Issues:
+
+* Cant sign in to certain Google Domains (co.kr, com.hk, .se etc.)
+
 == Example Code:
 
   require 'galerts'
