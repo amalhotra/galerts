@@ -83,9 +83,10 @@ module Galerts
 		# Note: Google allows creating the same alert (same search query) if delivery is different
 		# (email and rss feed) and/or domains are different
 
-		# Update given alert
+		# Update given alert by posting to update form
+		# Does not work for some domains
 		# TODO: Check duplicate as above
-		def update(alert)
+		def update_post(alert)
 			authenticate!(alert.domain)
 
 			# Needs these to prevent xss
@@ -104,6 +105,10 @@ module Galerts
 			params['f'] = FREQS_TYPES[alert.frequency] if alert.delivery == EMAIL_DELIVERY
 			resp = @agent.post(alerts_url("/save",alert.domain),params)
 			true
+		end
+
+		def update(alert)
+			delete(alert) && create(alert.query,alert.domain,alert.type,alert.frequency,alert.volume,alert.feed_url.nil?)
 		end
 
 		# Delete an alert
