@@ -12,6 +12,7 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
 == Issues:
 
 * Cant sign in to certain Google Domains (co.kr, com.hk, .se etc.)
+* Workaround: Create alerts logged out on different domains and verify them thru google.com/alerts
 
 == Example Code:
 
