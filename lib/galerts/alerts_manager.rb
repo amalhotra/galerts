@@ -6,17 +6,16 @@ module Galerts
 		#include Galerts::GoogleDefaults
 
 		# Allowed to read auth_domains and email
-		attr_reader :auth_domains,:email,:agent
+		attr_reader :auth_domains,:email#,:agent
 
 		def initialize(email,password)
 			email+='@gmail.com' if email.index('@').nil?
 			@email = email
-			domain = "com"
 			# Unfortunately we need to store this since we have to login to multiple google domains
 			@password = password
 			@auth_domains = []
 			init_agent
-			login(domain)
+			login("com")
 		end
 
 		def to_s
@@ -84,7 +83,7 @@ module Galerts
 		# (email and rss feed) and/or domains are different
 
 		# Update given alert by posting to update form
-		# Does not work for some domains
+		# Does not work for some domains, use update instead
 		# TODO: Check duplicate as above
 		def update_post(alert)
 			authenticate!(alert.domain)
@@ -107,6 +106,7 @@ module Galerts
 			true
 		end
 
+		# Delete the alert and then re-create it
 		def update(alert)
 			delete(alert) && create(alert.query,alert.domain,alert.type,alert.frequency,alert.volume,alert.feed_url.nil?)
 		end
