@@ -74,8 +74,9 @@ module Galerts
 			create_form.t = ALERT_TYPES[type]
 			create_form.l = VOLS_TYPES[volume]
 			resp = @agent.submit(create_form)
-			alert = find_by_query(query)
-			alert.nil? || alert.empty? || alert.active? ? alert : verify!(alert)
+			alerts = find_by_query(query)
+			alert = alerts.first
+			alert.nil? || alert.active? ? alert : verify!(alert)
 			# TODO: Check for duplicate alert and return message
 		end
 
@@ -120,6 +121,7 @@ module Galerts
 		# Verify an alert (Mainly a workaround till multiple domains issue can be solved)
 		def verify!(alert)
 			resp = @agent.get(alerts_url("/verify"),{'s' => alert.s}) unless alert.active?
+			alert.state = ACTIVE_ALERT_CLASS
 			alert
 		end
 
