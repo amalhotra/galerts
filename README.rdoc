@@ -42,3 +42,9 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
   # Find an alert by search string
   # Returns an array of Alert objects
   g_manager.find_by_query("ruby google alerts")
+
+== Limitations:
+  Certain google domains have been known not to work, here is a subset from http://en.wikipedia.org/wiki/List_of_Google_domains which are known not work:
+  
+  .ga, .gd, .gf, .im, .io, .lc
+
