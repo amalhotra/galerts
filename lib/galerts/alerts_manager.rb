@@ -56,7 +56,7 @@ module Galerts
 				end
 				email = @email # TODO: Could be one of many email addresses associated with account
 				state = alert_row.attributes["class"].value
-				g_alerts << Alert.new(email,query,search_query,type,frequency,volume,delivery,s,state,feed_url)
+				g_alerts << Galert.new(email,query,search_query,type,frequency,volume,delivery,s,state,feed_url)
 			end	
 			g_alerts
 		end

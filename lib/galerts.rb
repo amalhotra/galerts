@@ -52,5 +52,5 @@ module Galerts
 end
 
 require 'galerts/google_defaults'
-require 'galerts/alert'
+require 'galerts/galert'
 require 'galerts/alerts_manager'
