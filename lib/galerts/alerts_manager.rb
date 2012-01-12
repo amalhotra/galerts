@@ -142,6 +142,10 @@ module Galerts
 			self.alerts.select{|a| attrs.keys.inject(true) {|memo,k| memo = memo && attrs[k] == a.send(k) }}
 		end
 
+		def find_by_query(query)
+			find({:query => query})
+		end
+
 		def inspect
 			to_s
 		end
