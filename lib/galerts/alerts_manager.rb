@@ -64,7 +64,9 @@ module Galerts
 		# Create a new alert
 		def create(query,domain = "com",type = EVERYTHING,frequency = RT,volume = ALL_VOL,feed=false)
 			# If we havent been authenticated for a domain, authenticate now
-			authenticate!(domain)
+			# Dont authenticate since we have problems authenticating with all google domains
+			# We just verify for non .com domains
+			#authenticate!(domain)
 			create_page = @agent.get(alerts_url("",domain))
 			create_form = create_page.forms.first
 			create_form.q = query
