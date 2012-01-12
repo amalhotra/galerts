@@ -113,10 +113,15 @@ module Galerts
 
 		# Delete an alert
 		def delete(alert)
+			delete_by_s(alert.s)
+		end
+
+		# Delete alert using the 's' value
+		def delete_by_s(s)
 			params = {
 				'da' => 'Delete',
 				'e' => @email,
-				's' => alert.s,
+				's' => s,
 				'x' => scrape_galx
 			}
 			resp = @agent.post(alerts_url("/save"),params)
