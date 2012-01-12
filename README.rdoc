@@ -33,15 +33,18 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
   # Create a new alert for "ruby google alerts" on Google News Spain in real time delivering alerts via email
   # Note: There are defaults on the create, we list them here for better understanding
 
-  g_manager.create("ruby google alerts","es",Galert::GoogleDefaults::NEWS,Galert::GoogleDefaults::RT,Galert::GoogleDefaults::BEST_VOL,false)
+  g_manager.create("ruby google alerts","es",Galerts::NEWS,Galerts::RT,Galerts::BEST_VOL,false)
 
   # Delete an alert
 
   g_manager.delete(sample_alert)
 
-  # Find an alert by search string
+  # Find an alert by passing a map of attributes
   # Returns an array of Alert objects
-  g_manager.find_by_query("ruby google alerts")
+  g_manager.find({:query => "ruby google alerts"})
+  g_manager.find({:query => "ruby google alerts",:domain => "com"})
+  g_manager.find({:query => "ruby google alerts",:domain => "com",:feed => true})
+  ..
 
 == Limitations:
   Certain google domains have been known not to work. 
