@@ -75,7 +75,7 @@ module Galerts
 			create_form.t = ALERT_TYPES[type]
 			create_form.l = VOLS_TYPES[volume]
 			resp = @agent.submit(create_form)
-			alerts = find_by_query(query)
+			alerts = find({:query => query,:domain => domain,:feed => feed})
 			alert = alerts.first
 			alert.nil? || alert.active? ? alert : verify!(alert)
 			# TODO: Check for duplicate alert and return message
@@ -138,8 +138,8 @@ module Galerts
 		end
 
 		# Return all alerts that match a given query
-		def find_by_query(query)
-			self.alerts.select{|a| a.query == query}
+		def find(attrs = {})
+			self.alerts.select{|a| attrs.keys.inject(true) {|memo,k| memo = memo && attrs[k] == a.send(k) }}
 		end
 
 		def inspect
