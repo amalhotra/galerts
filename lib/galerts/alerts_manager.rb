@@ -110,7 +110,7 @@ module Galerts
 
 		# Delete the alert and then re-create it
 		def update(alert)
-			delete(alert) && create(alert.query,alert.domain,alert.type,alert.frequency,alert.volume,alert.feed_url.nil?)
+			delete(alert) && create(alert.query,alert.domain,alert.type,alert.frequency,alert.volume,alert.feed)
 		end
 
 		# Delete an alert
