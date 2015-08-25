@@ -1,3 +1,7 @@
+= Status
+
+I don't have much time to update this gem. https://github.com/pivotus/galerts seems to be a newer gem that may work better with the new google alerts api params and is also the gem pushed to rubygems.
+
 = Galerts
 
 Simple Ruby library that uses Mechanize to scrape Google Alerts from the google alerts webpage. A lot of the functionality was ported from https://github.com/jab/galerts
@@ -13,6 +17,7 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
 
 * Cant sign in to certain Google Domains (co.kr, com.hk, .se etc.)
 * Workaround: Create alerts logged out on different domains and verify them thru google.com/alerts
+* Must use ```gem 'galerts', :git => 'github.com/amalhotra/galerts'```
 
 == Example Code:
 
