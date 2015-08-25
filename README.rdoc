@@ -19,7 +19,7 @@ Simple Ruby library that uses Mechanize to scrape Google Alerts from the google 
 * Workaround: Create alerts logged out on different domains and verify them thru google.com/alerts
 * Must use 
   
-  gem 'galerts', :git => 'github.com/amalhotra/galerts'
+  gem 'galerts', :git => 'git://github.com/amalhotra/galerts'
 
 == Example Code:
 
